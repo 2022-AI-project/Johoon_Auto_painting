@@ -28,77 +28,82 @@ class drawing_board(QWidget):
         self.right2 = QVBoxLayout()
 
         # 그룹박스1 생성 및 좌 레이아웃 배치
-        gb = QGroupBox('그리기 종류')
-        left.addWidget(gb)
+        # gb = QGroupBox('그리기 종류')
+        # left.addWidget(gb)
 
         # 그룹박스1 에서 사용할 레이아웃
-        box = QVBoxLayout()
-        gb.setLayout(box)
+        # box = QVBoxLayout()
+        # gb.setLayout(box)
 
         # 그룹박스 1 의 라디오 버튼 배치
-        text = ['line', 'Curve', 'Rectange', 'Ellipse']
-        self.radiobtns = []
+        # text = ['line', 'Curve', 'Rectange', 'Ellipse']
+        # self.radiobtns = []
 
-        for i in range(len(text)):
-            self.radiobtns.append(QRadioButton(text[i], self))
-            self.radiobtns[i].clicked.connect(self.radioClicked)
-            box.addWidget(self.radiobtns[i])
+        # for i in range(len(text)):
+        #     self.radiobtns.append(QRadioButton(text[i], self))
+        #     self.radiobtns[i].clicked.connect(self.radioClicked)
+        # #     box.addWidget(self.radiobtns[i])
 
-        self.radiobtns[1].setChecked(True)
+        # self.radiobtns[1].setChecked(True)
         self.drawType = 1
 
         # 그룹박스2
-        gb = QGroupBox('펜 설정')
-        left.addWidget(gb)
+        # gb = QGroupBox('펜 설정')
+        # left.addWidget(gb)
 
-        grid = QGridLayout()
-        gb.setLayout(grid)
+        # grid = QGridLayout()
+        # gb.setLayout(grid)
 
-        label = QLabel('선굵기')
-        grid.addWidget(label, 0, 0)
+        # label = QLabel('선굵기')
+        # grid.addWidget(label, 0, 0)
 
         self.combo = QComboBox()
-        grid.addWidget(self.combo, 0, 1)
+        # grid.addWidget(self.combo, 0, 1)
  
         for i in range(4, 21):
             self.combo.addItem(str(i))
 
-        label = QLabel('선색상')
-        grid.addWidget(label, 1, 0)
+        # label = QLabel('선색상')
+        # grid.addWidget(label, 1, 0)
 
         self.pencolor = QColor(0, 0, 0)
         self.penbtn = QPushButton()
         self.penbtn.setStyleSheet('background-color: rgb(0,0,0)')
         self.penbtn.clicked.connect(self.showColorDlg)
-        grid.addWidget(self.penbtn, 1, 1)
+        # grid.addWidget(self.penbtn, 1, 1)
 
         # 그룹박스3
-        gb = QGroupBox('붓 설정')
-        left.addWidget(gb)
+        # gb = QGroupBox('붓 설정')
+        # left.addWidget(gb)
 
-        hbox = QHBoxLayout()
-        gb.setLayout(hbox)
+        # hbox = QHBoxLayout()
+        # gb.setLayout(hbox)
 
-        label = QLabel('붓색상')
-        hbox.addWidget(label)
+        # label = QLabel('붓색상')
+        # hbox.addWidget(label)
 
         self.brushcolor = QColor(255, 255, 255)                             # brush color == black
         self.brushbtn = QPushButton()                                       
         self.brushbtn.setStyleSheet('background-color: rgb(255,255,255)')
         self.brushbtn.clicked.connect(self.showColorDlg)
-        hbox.addWidget(self.brushbtn)
+        # hbox.addWidget(self.brushbtn)
 
         # 그룹박스4
-        gb = QGroupBox('지우개')
-        left.addWidget(gb)
+        # gb = QGroupBox('지우개')
+        # left.addWidget(gb)
 
-        hbox = QHBoxLayout()
-        gb.setLayout(hbox)
+        # hbox = QHBoxLayout()
+        # gb.setLayout(hbox)
 
         self.checkbox = QCheckBox('지우개 동작')
         self.checkbox.stateChanged.connect(self.checkClicked)
-        hbox.addWidget(self.checkbox)
+        # hbox.addWidget(self.checkbox)
 
+        # 우 레이아웃 박스에 그래픽 뷰 추가
+        self.view = CView(self)
+        self.view.setFixedWidth(256)
+        self.view.setFixedHeight(256)
+        left.addWidget(self.view)
         # 전체 지우기
         removebutton = QPushButton('전체 지우기', self)
         left.addWidget(removebutton)
@@ -116,11 +121,6 @@ class drawing_board(QWidget):
 
         left.addStretch(1)  # 그냥 레이아웃 여백 추가
 
-        # 우 레이아웃 박스에 그래픽 뷰 추가
-        self.view = CView(self)
-        self.view.setFixedWidth(256)
-        self.view.setFixedHeight(256)
-        right.addWidget(self.view)
 
         # 제일 오른쪽 레이아웃에 빈 흰색 배경
         pixmap = QPixmap('whiteimage.png')

@@ -145,11 +145,11 @@ class make_model():
             model_path = model_dir + '/multi_img_classification.model'
             checkpoint = ModelCheckpoint(filepath=model_path, monitor='val_loss',
                                          verbose=1, save_best_only=True)
-            early_stopping = EarlyStopping(monitor='val_loss', patience=6)
+            early_stopping = EarlyStopping(monitor='val_loss', patience=5)
 
         model.summary()
 
-        history = model.fit(X_train, y_train, batch_size=1024, epochs=50, validation_data=(X_test, y_test), callbacks=[checkpoint, early_stopping])
+        history = model.fit(X_train, y_train, batch_size=512, epochs=50, validation_data=(X_test, y_test), callbacks=[checkpoint, early_stopping])
         # batch_size, epochs 조절해가면서 변화 확인
         print("정확도 : %.4f" % (model.evaluate(X_test, y_test)[1]))
 
