@@ -27,21 +27,23 @@ class classification():
         img = ''
 
         for i, f in enumerate(files):
+            data_size += 1
             img = Image.open(f)
             img = img.convert("RGB")
             img = img.resize((image_w, image_h))
 
             data = np.asarray(img)
             filenames.append(f)
+
             X.append(data)
-            data_size += 1
         
         plt.imshow(img)             # Resized image 를 출력
         plt.title("Resized Image")
         plt.show()
 
         X = np.array(X)
-        model = load_model('./model/multi_img_classification.model')
+        print("X shape :", X.shape)
+        model = load_model('./model/multi_img_classification_6_64_relu.model')
         prediction = model.predict(X)
 
         # print("PREDICTION BEFORE\n", prediction)
@@ -69,6 +71,8 @@ class classification():
             elif pre_ans == 5: pre_ans_str = "수박"     # 초록
 
             # 이 위치에선 현재 v Array value 들 중 하나만 1.00 이다. 그게 label 에 해당됨
+
+            print(v)
 
             if v[0] >= 0.8:
                 self.label = 'apple'
