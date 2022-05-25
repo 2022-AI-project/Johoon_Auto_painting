@@ -5,8 +5,8 @@ from sklearn.model_selection import train_test_split
 
 class make_model():
     def __init__(self):
-        # self.image_rotate() # 전처리 완료 시 생략 
-        # self.make_npy_file()
+        self.image_rotate()     # 전처리 완료 시 생략 
+        self.make_npy_file()
         self.make_model()
 
     def image_rotate(self):
@@ -20,13 +20,13 @@ class make_model():
         for idx, cat in enumerate(categories):
             image_dir = caltech_dir + "/" + cat
             files = glob.glob(image_dir + "/*.png")
-            print(cat, " 파일 길이 : ", len(files))
+            print(cat, "사진 개수 : ", len(files))
             for i, f in enumerate(files):
                 img = Image.open(f)
                 img = img.convert("RGB")
                 img = img.resize((image_w, image_h))
                 white=(255, 255, 255)
-                for j in range(-17, 18):
+                for j in range(-9, 9):
                     img_name=f.split('.')
                     img_name = img_name[1].split("\\")
 
@@ -65,7 +65,7 @@ class make_model():
             files_rotated = glob.glob(image_dir_rotated + "/*.png")
 
             # print(cat, " 원본 파일 길이 : ", len(files))
-            print(cat, " 원본 파일 길이 : ", len(files_rotated))
+            print(cat, " 회전된 사진 개수 : ", len(files_rotated))
 
             # for i, f in enumerate(files):
             #     img = Image.open(f)
@@ -142,14 +142,14 @@ class make_model():
             if not os.path.exists(model_dir):
                 os.mkdir(model_dir)
 
-            model_path = model_dir + '/multi_img_classification.model'
+            model_path = model_dir + '/multi_img_classification_6_64.model'
             checkpoint = ModelCheckpoint(filepath=model_path, monitor='val_loss',
                                          verbose=1, save_best_only=True)
-            early_stopping = EarlyStopping(monitor='val_loss', patience=5)
+            early_stopping = EarlyStopping(monitor='val_loss', patience=6)
 
         model.summary()
 
-        history = model.fit(X_train, y_train, batch_size=512, epochs=50, validation_data=(X_test, y_test), callbacks=[checkpoint, early_stopping])
+        history = model.fit(X_train, y_train, batch_size=64, epochs=50, validation_data=(X_test, y_test), callbacks=[checkpoint, early_stopping])
         # batch_size, epochs 조절해가면서 변화 확인
         print("정확도 : %.4f" % (model.evaluate(X_test, y_test)[1]))
 
