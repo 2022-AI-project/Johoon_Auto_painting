@@ -97,9 +97,8 @@ class make_model():
         with K.tf_ops.device('/device:CPU:0'):
             model = Sequential()
             print("[input shape]\n", X_train.shape[1:])
-            model.add(Conv2D(32, (3, 3), padding="same", input_shape=X_train.shape[1:], activation='relu'))
-            # model.add(Conv2D(1, (1, 1), padding="valid", input_shape=X_train.shape[1:], activation='relu'))
-            # model.add(Conv2D(32, (3, 3), padding="same", activation='relu'))
+            model.add(Conv2D(64, (3, 3), padding="same", input_shape=X_train.shape[1:], activation='relu'))
+            model.add(Conv2D(64, (3, 3), padding="same", activation='relu'))
             model.add(MaxPooling2D(pool_size=(2, 2)))
             model.add(Dropout(0.25))
 
