@@ -10,7 +10,7 @@ class make_model():
         self.image_w = 128   # width of image
         self.image_h = 128   # height of image
 
-        self.image_rotate()     # 전처리 완료 시 생략 
+        # self.image_rotate()     # 전처리 완료 시 생략 
         self.make_npy_file()
         self.make_model()
 
@@ -43,7 +43,7 @@ class make_model():
     # *.npy file 을 만드는 method 이다.
     def make_npy_file(self):
         # rotate 된 train data image 가 있는 directory
-        caltech_dir_rotated = "./multi_img_data/imgs_others/train_rotated"
+        caltech_dir_rotated = "./multi_img_data/imgs_others/train"
 
         X = []
         y = []
@@ -56,12 +56,12 @@ class make_model():
             image_dir_rotated = caltech_dir_rotated + "/" + cat
             files_rotated = glob.glob(image_dir_rotated + "/*.png")
 
-            print("회전된", cat, "사진 개수 : ", len(files_rotated))
+            print(cat, "사진 개수 : ", len(files_rotated))
         
             for i, f in enumerate(files_rotated):
                 img = Image.open(f)
-                # img = img.convert("RGB")
-                # img = img.resize((self.image_w, self.image_h))
+                img = img.convert("RGB")
+                img = img.resize((self.image_w, self.image_h))
                 data = np.asarray(img)
                
                 X.append(data)      # 현재 image data 를 append 한다.
@@ -73,7 +73,7 @@ class make_model():
         X_train, X_test, y_train, y_test = train_test_split(X, y)   # train, validation set으로 나뉜다.
         xy = (X_train, X_test, y_train, y_test)
 
-        np.save("./numpy_data/multi_image_data.npy", xy)
+        np.save("./numpy_data/multi_image_data_test.npy", xy)
 
     def make_model(self):
         from keras.models import Sequential
@@ -87,7 +87,7 @@ class make_model():
         config.gpu_options.allow_growth = True
         session = tf.compat.v1.Session(config=config)
 
-        X_train, X_test, y_train, y_test = np.load("./numpy_data/multi_image_data.npy", allow_pickle = True)
+        X_train, X_test, y_train, y_test = np.load("./numpy_data/multi_image_data_test.npy", allow_pickle = True)
         
         X_train = X_train.astype(float) / 255
         X_test = X_test.astype(float) / 255
@@ -120,11 +120,11 @@ class make_model():
             checkpoint = ModelCheckpoint(filepath=model_path, monitor='val_loss',
                                          verbose=1, save_best_only=True)
             
-            early_stopping = EarlyStopping(monitor='val_loss', patience=6)
+            early_stopping = EarlyStopping(monitor='val_loss', patience=600)
 
         model.summary()
 
-        history = model.fit(X_train, y_train, batch_size=256, epochs=50, validation_data=(X_test, y_test), callbacks=[checkpoint, early_stopping])
+        history = model.fit(X_train, y_train, batch_size=64, epochs=70, validation_data=(X_test, y_test), callbacks=[checkpoint, early_stopping])
         # batch_size, epochs 조절해가면서 변화 확인
         print("정확도 : %.4f" % (model.evaluate(X_test, y_test)[1]))
 
