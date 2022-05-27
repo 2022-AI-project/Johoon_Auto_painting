@@ -63,16 +63,16 @@ class classification():
             
             pre_ans = v.argmax()  # 예측레이블
             pre_ans_str = ''
+
             if pre_ans == 0: pre_ans_str = "사과"       # 빨강, 초록
             elif pre_ans == 1: pre_ans_str = "당근"     # 주황
             elif pre_ans == 2: pre_ans_str = "참외"     # 노랑
             elif pre_ans == 3: pre_ans_str = "딸기"     # 빨강, 초록
             elif pre_ans == 4: pre_ans_str = "토마토"   # 빨강, 초록
             elif pre_ans == 5: pre_ans_str = "수박"     # 초록
+            else: pre_ans_str = "식별 불가능"
 
             # 이 위치에선 현재 v Array value 들 중 하나만 1.00 이다. 그게 label 에 해당됨
-
-            print(v)
 
             if v[0] >= 0.8:
                 self.label = 'apple'

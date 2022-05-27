@@ -11,7 +11,7 @@ class make_model():
         self.image_h = 128   # height of image
 
         # self.image_rotate()     # 전처리 완료 시 생략 
-        # self.make_npy_file()
+        self.make_npy_file()
         self.make_model()
 
     # train data image 를 rotate 하는 method -> Data augmentation
@@ -20,7 +20,7 @@ class make_model():
         saving_dir = "./multi_img_data/imgs_others/train_rotated"   # rotated train data directory
         # 6 categories -> 6 classes (6 labels)
 
-        for idx, cat in enumerate(self.categories):          # 현재 6 개의 label 들에 대한 train data를 수집한다.
+        for idx, cat in enumerate(self.categories):     # 현재 6 개의 label 들에 대한 train data를 수집한다.
             image_dir = caltech_dir + "/" + cat         # 각 label 들의 train data image 는 caltech_dir에
             files = glob.glob(image_dir + "/*.png")     #   그 label 이름의 directory 내부에 *.png 파일로 저장되어 있다.
                                                         #   모든 *.png 파일을 files 에 저장한다.
@@ -59,9 +59,9 @@ class make_model():
         
             for i, f in enumerate(files_rotated):
                 img = Image.open(f)
-                img = img.convert("RGB")
-                img = img.resize((self.image_w, self.image_h))
-                data=np.asarray(img)
+                # img = img.convert("RGB")
+                # img = img.resize((self.image_w, self.image_h))
+                data = np.asarray(img)
                
                 X.append(data)      # 현재 image data 를 append 한다.
                 y.append(label)     # 현재 image 의 target score 를 append 한다.
@@ -72,7 +72,7 @@ class make_model():
         X_train, X_test, y_train, y_test = train_test_split(X, y)
         xy = (X_train, X_test, y_train, y_test)
 
-        np.save("./numpy_data/multi_image_data.npy", xy)
+        np.save("./numpy_data/multi_image_data_temp.npy", xy)
 
     def make_model(self):
         from keras.models import Sequential
@@ -86,7 +86,7 @@ class make_model():
         config.gpu_options.allow_growth = True
         session = tf.compat.v1.Session(config=config)
 
-        X_train, X_test, y_train, y_test = np.load("./numpy_data/multi_image_data.npy", allow_pickle = True)
+        X_train, X_test, y_train, y_test = np.load("./numpy_data/multi_image_data_temp.npy", allow_pickle = True)
         
         X_train = X_train.astype(float) / 255
         X_test = X_test.astype(float) / 255
@@ -98,8 +98,6 @@ class make_model():
             model = Sequential()
             print("[input shape]\n", X_train.shape[1:])
             model.add(Conv2D(32, (3, 3), padding="same", input_shape=X_train.shape[1:], activation='relu'))
-            # model.add(Conv2D(1, (1, 1), padding="valid", input_shape=X_train.shape[1:], activation='relu'))
-            # model.add(Conv2D(32, (3, 3), padding="same", activation='relu'))
             model.add(MaxPooling2D(pool_size=(2, 2)))
             model.add(Dropout(0.25))
 
@@ -117,7 +115,7 @@ class make_model():
             if not os.path.exists(model_dir):
                 os.mkdir(model_dir)
 
-            model_path = model_dir + '/multi_img_classification_6_128_relu.model'
+            model_path = model_dir + '/multi_img_classification_6_128_relu_temp.model'
             checkpoint = ModelCheckpoint(filepath=model_path, monitor='val_loss',
                                          verbose=1, save_best_only=True)
             early_stopping = EarlyStopping(monitor='val_loss', patience=6)

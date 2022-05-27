@@ -101,8 +101,15 @@ class make_model():
             model.add(Conv2D(64, (3, 3), padding="same", activation='relu'))
             model.add(MaxPooling2D(pool_size=(2, 2)))
             model.add(Dropout(0.25))
+            
+            model.add(Conv2D(128, (3, 3), padding="same", activation='relu'))
+            model.add(Conv2D(128, (3, 3), padding="same", activation='relu'))
+            model.add(MaxPooling2D(pool_size=(2, 2)))
+            model.add(Dropout(0.25))
 
-            model.add(Conv2D(64, (3, 3), padding="same", activation='relu'))
+            model.add(Conv2D(256, (3, 3), padding="same", activation='relu'))            
+            model.add(Conv2D(256, (3, 3), padding="same", activation='relu'))
+            model.add(Conv2D(256, (3, 3), padding="same", activation='relu'))
             model.add(MaxPooling2D(pool_size=(2, 2)))
             model.add(Dropout(0.25))
 
@@ -116,7 +123,7 @@ class make_model():
             if not os.path.exists(model_dir):
                 os.mkdir(model_dir)
 
-            model_path = model_dir + '/multi_img_classification_6_128_relu.model'
+            model_path = model_dir + '/multi_img_classification_6_128_relu_VGG9.model'
             checkpoint = ModelCheckpoint(filepath=model_path, monitor='val_loss',
                                          verbose=1, save_best_only=True)
             early_stopping = EarlyStopping(monitor='val_loss', patience=6)
