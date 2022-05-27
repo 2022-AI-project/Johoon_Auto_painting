@@ -10,7 +10,7 @@ class make_model():
         self.image_w = 128   # width of image
         self.image_h = 128   # height of image
 
-        # self.image_rotate()     # 전처리 완료 시 생략 
+        self.image_rotate()     # 전처리 완료 시 생략 
         self.make_npy_file()
         self.make_model()
 
@@ -30,13 +30,14 @@ class make_model():
                 img = img.convert("RGB")                #   현재 image 를 RGB mode 로 변경한다.
                 img = img.resize((self.image_w, self.image_h))    # 현재 image 를 128 * 128 size 로 resizing 한다.
                 white = (255, 255, 255)                 # 하얀색은 RGB로 [255, 255, 255] 이다.
+
                 for j in range(-9, 9):
                     img_name = f.split('.')
                     img_name = img_name[1].split("\\")
 
                     img_ro = img.rotate(20 * j, expand = 1, fillcolor = white)
                     img_ro = img_ro.crop((img_ro.size[0]/2 - self.image_w/2, img_ro.size[1]/2 - self.image_h/2, img_ro.size[0]/2 + self.image_w/2, img_ro.size[1]/2 + self.image_h/2))
-                    finally_saving_dir = saving_dir + "/" + cat + "/" + img_name[1] + "_" + str(j + 18) + ".png"
+                    finally_saving_dir = saving_dir + "/" + cat + "/" + img_name[1] + "_" + str(j + 10) + ".png"
                     img_ro.save(finally_saving_dir)
 
     # *.npy file 을 만드는 method 이다.
@@ -69,10 +70,10 @@ class make_model():
         X = np.array(X)
         y = np.array(y)
 
-        X_train, X_test, y_train, y_test = train_test_split(X, y)
+        X_train, X_test, y_train, y_test = train_test_split(X, y)   # train, validation set으로 나뉜다.
         xy = (X_train, X_test, y_train, y_test)
 
-        np.save("./numpy_data/multi_image_data_temp.npy", xy)
+        np.save("./numpy_data/multi_image_data.npy", xy)
 
     def make_model(self):
         from keras.models import Sequential
@@ -86,7 +87,7 @@ class make_model():
         config.gpu_options.allow_growth = True
         session = tf.compat.v1.Session(config=config)
 
-        X_train, X_test, y_train, y_test = np.load("./numpy_data/multi_image_data_temp.npy", allow_pickle = True)
+        X_train, X_test, y_train, y_test = np.load("./numpy_data/multi_image_data.npy", allow_pickle = True)
         
         X_train = X_train.astype(float) / 255
         X_test = X_test.astype(float) / 255
@@ -115,14 +116,14 @@ class make_model():
             if not os.path.exists(model_dir):
                 os.mkdir(model_dir)
 
-            model_path = model_dir + '/multi_img_classification_6_128_relu_temp.model'
+            model_path = model_dir + '/multi_img_classification_6_256_relu.model'
             checkpoint = ModelCheckpoint(filepath=model_path, monitor='val_loss',
                                          verbose=1, save_best_only=True)
             early_stopping = EarlyStopping(monitor='val_loss', patience=6)
 
         model.summary()
 
-        history = model.fit(X_train, y_train, batch_size=128, epochs=50, validation_data=(X_test, y_test), callbacks=[checkpoint, early_stopping])
+        history = model.fit(X_train, y_train, batch_size=256, epochs=50, validation_data=(X_test, y_test), callbacks=[checkpoint, early_stopping])
         # batch_size, epochs 조절해가면서 변화 확인
         print("정확도 : %.4f" % (model.evaluate(X_test, y_test)[1]))
 

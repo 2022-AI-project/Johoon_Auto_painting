@@ -27,7 +27,7 @@ class Fill_color(object):
         sg_img , count, count_size = self.segmentation(bin_img)
         result = self.segmentation_image_show(origin_img,sg_img, label, count, cnt)
         result = self.line_effect(sg_img, result, 7, 10)
-        result = self.natual_coloring(result, 80)
+        result = self.natural_coloring(result, 80)
         result = cv2.GaussianBlur(result, (3, 3), 0)
         cv2.imwrite('./multi_img_data/result/result.png', result)
         self.file = './multi_img_data/result/result.png'
@@ -85,7 +85,7 @@ class Fill_color(object):
         color_img = copy.deepcopy(origin_img)
         # print(count) # 세그먼트 개수 출력
         # [4,2,173] # 체리색
-        dic_label = {"apple":"사과","tomato":"토마토","watermelon" : "수박","orientalmelon":"참외","shellfish":"조개","carrot":"당근"}
+        dic_label = {"apple":"사과","tomato":"토마토","watermelon" : "수박","orientalmelon":"참외","strawberry":"딸기","carrot":"당근"}
 
         if cnt == 1:    # 여러개의 색이 filling 되는 경우 한 번만 추정 label 을 출력
             print('\n\n=== 해당 이미지는 '+dic_label[label]+'(으)로 추정됩니다 === ')
@@ -168,7 +168,7 @@ class Fill_color(object):
             count_list[count_sort_list[i]] = 0
         return count_sort_list
 
-    def natual_coloring(self, img, value):
+    def natural_coloring(self, img, value):
         # random_num = random.randrange(125,175)
         random_num = 125
         for i in range(random_num-value,random_num+value):

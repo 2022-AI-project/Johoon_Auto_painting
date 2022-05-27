@@ -79,8 +79,9 @@ class make_model():
         from keras.layers import Conv2D, MaxPooling2D, Dense, Flatten, Dropout
         from keras.callbacks import EarlyStopping, ModelCheckpoint
         import matplotlib.pyplot as plt
-        import keras.backend.tensorflow_backend as K
+        # import keras.backend.tensorflow_backend as K
         import tensorflow as tf
+        from tensorflow import keras as k
 
         config = tf.compat.v1.ConfigProto()
         config.gpu_options.allow_growth = True
@@ -94,45 +95,47 @@ class make_model():
         '''
         1. 사용된 parameter 의 총 개수를 얻어보자.
         '''
-        with K.tf_ops.device('/device:CPU:0'):
-            model = Sequential()
-            print("[input shape]\n", X_train.shape[1:])
-            model.add(Conv2D(64, (3, 3), padding="same", input_shape=X_train.shape[1:], activation='relu'))
-            model.add(Conv2D(64, (3, 3), padding="same", activation='relu'))
-            model.add(MaxPooling2D(pool_size=(2, 2)))
-            model.add(Dropout(0.25))
-            
-            model.add(Conv2D(128, (3, 3), padding="same", activation='relu'))
-            model.add(Conv2D(128, (3, 3), padding="same", activation='relu'))
-            model.add(MaxPooling2D(pool_size=(2, 2)))
-            model.add(Dropout(0.25))
 
-            model.add(Conv2D(256, (3, 3), padding="same", activation='relu'))            
-            model.add(Conv2D(256, (3, 3), padding="same", activation='relu'))
-            model.add(Conv2D(256, (3, 3), padding="same", activation='relu'))
-            model.add(MaxPooling2D(pool_size=(2, 2)))
-            model.add(Dropout(0.25))
+        model2 = Sequential()
+        model2.add(k.layers.Conv2D(64, (3, 3), padding="same", input_shape=X_train.shape[1:], activation="relu"))
+        model2.add(k.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="same"))
+        model2.add(k.layers.Dropout(0.25))
+        
+        model2.add(k.layers.Conv2D(128, (3, 3), padding="same", activation="relu"))
+        # model2.add(k.layers.Conv2D(128, (3, 3), padding="same", activation="relu"))
+        model2.add(k.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="same"))
+        model2.add(k.layers.Dropout(0.25))
 
-            model.add(Flatten())
-            model.add(Dense(256, activation='relu'))
-            model.add(Dropout(0.5))
-            model.add(Dense(self.nb_classes, activation='softmax'))
-            model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-            model_dir = './model'
+        # model2.add(k.layers.Conv2D(256, (3, 3), padding="same", activation="relu"))
+        # model2.add(k.layers.Conv2D(256, (3, 3), padding="same", activation="relu"))
+        model2.add(k.layers.Conv2D(256, (3, 3), padding="same", activation="relu"))
+        model2.add(k.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="same"))
+        model2.add(k.layers.Dropout(0.25))
 
-            if not os.path.exists(model_dir):
-                os.mkdir(model_dir)
+        model2.add(k.layers.Flatten())
+        model2.add(k.layers.Dense(256, activation="relu"))
+        model2.add(k.layers.Dropout(0.5))
+        model2.add(k.layers.Dense(256, activation="softmax"))
 
-            model_path = model_dir + '/multi_img_classification_6_128_relu_VGG9.model'
-            checkpoint = ModelCheckpoint(filepath=model_path, monitor='val_loss',
-                                         verbose=1, save_best_only=True)
-            early_stopping = EarlyStopping(monitor='val_loss', patience=6)
+        model2.compile(loss='sparse_categorical_crossentropy', metrics='accuracy')
 
-        model.summary()
+        history = model2.fit(X_train, y_train, epochs=5, verbose=0)
 
-        history = model.fit(X_train, y_train, batch_size=128, epochs=50, validation_data=(X_test, y_test), callbacks=[checkpoint, early_stopping])
+        model_dir = './model'
+
+        if not os.path.exists(model_dir):
+            os.mkdir(model_dir)
+
+        model_path = model_dir + '/multi_img_classification_6_128_relu_VGG9.model'
+        checkpoint = ModelCheckpoint(filepath=model_path, monitor='val_loss',
+                                        verbose=1, save_best_only=True)
+        early_stopping = EarlyStopping(monitor='val_loss', patience=6)
+
+        model2.summary()
+
+        history = model2.fit(X_train, y_train, batch_size=128, epochs=50, validation_data=(X_test, y_test), callbacks=[checkpoint, early_stopping])
         # batch_size, epochs 조절해가면서 변화 확인
-        print("정확도 : %.4f" % (model.evaluate(X_test, y_test)[1]))
+        print("정확도 : %.4f" % (model2.evaluate(X_test, y_test)[1]))
 
         y_vloss = history.history['val_loss']
         y_loss = history.history['loss']
