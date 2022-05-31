@@ -37,59 +37,50 @@ class Fill_color(object):
 
     def segmentation(self, img):
         segmentation_img = copy.deepcopy(img)
-        offset = [[1, 0], [0, 1], [-1, 0], [0, -1]]
-        count_size = {}
+        offset = [[1, 0], [0, 1], [-1, 0], [0, -1]]     # 상하좌우로 이동하기 위한 offset 이다.
+        count_size = {}                                 # 같은 색이 입혀지는 범위의 pixel 수들을 저장한다.
         count = 0
-        start_point = []
+        start_point = []                                # 색칠되지 않은 pixel이 감지되는 위치이다.
 
-        for i in range(len(img)):
-            for j in range(len(img[0])):
-                if segmentation_img[i][j] == 255:
-                    start_point.append([i,j])
-                    count += 1  # segmentation_img[i][j] 가 255인 곳의 개수?
+        for i in range(len(img)):                       # 2d image 를
+            for j in range(len(img[0])):                #   모든 pixel을 check 한다.
+                if segmentation_img[i][j] == 255:       # segmentation_img[i][j] 의 값이 255 라는건 그 pixel과 인접한 영역이
+                    start_point.append([i,j])           #   색칠되지 않은 상태이므로 start_point 에 넣고 작업을 시작한다.
+                    count += 1                          # 한 영역이 색칠 될 것 이므로 count 값을 늘린다.
 
-                    count_size[count] = 0
-
-                    print("(i, j) == (", i, ", ", j, ") and count == ", count)
+                    count_size[count] = 0               # 칠해질 영역의 count_size 를 0으로 초기화 한다.
 
                     q = [[i,j]]
 
-                    while q:
+                    while q:                            # queue 를 활용하여 dfs Algorithm 으로 현재 영역을 모두 count값으로 바꾼다.
                         cur = q.pop(0)
                         x, y = cur[0], cur[1]
                         if x < 0 or y < 0:
                             pass
-                        elif x > len(img) - 1 or y > len(img[0]) - 1: # out of bound
+                        elif x > len(img) - 1 or y > len(img[0]) - 1:   # out of bound 된 pixel 이라면
                             pass
-                        elif segmentation_img[x][y] != 255:
+                        elif segmentation_img[x][y] != 255:             # 이미 색이 부여된 pixel 이라면
                             pass
-                        else:
-                            segmentation_img[x][y] = count
-                            count_size[count] += 1
-                            for i in range(4):
-                                q.append([x + offset[i][0], y + offset[i][1]])  # dfs 인듯?
+                        else:                                           # 색이 부여될 수 있는 pixel 이라면
+                            segmentation_img[x][y] = count              #   현재 위치의 값에 count 를 부여한 후
+                            count_size[count] += 1                      #   count_size[count] 값을 1 늘린다.
+                            for i in range(4):                                  # 현재 pixel 에서 상하좌우 영역의 pixel을
+                                q.append([x + offset[i][0], y + offset[i][1]])  #   q 에 추가한다.
 
-
+        # 가장 많이 칠해진 영역이 앞에 오도록 count_size sorting 을 진행한다.
         count_size = sorted(count_size.items(), reverse = True, key = lambda item: item[1])
 
-        print(" count size is ")
-        print(count_size)
-
-        print("start point : ", start_point)
-        print("count : ", count)
         return [segmentation_img, count, count_size]
 
     def segmentation_image_show(self,origin_img, segmentation_img , label, count, cnt):
         color_img = copy.deepcopy(origin_img)
-        # print(count) # 세그먼트 개수 출력
-        # [4,2,173] # 체리색
+
+        # label들의 korean label dictionary 를 만든다.
         dic_label = {"apple":"사과","tomato":"토마토","watermelon" : "수박","orientalmelon":"참외","strawberry":"딸기","carrot":"당근"}
 
         if cnt == 1:    # 여러개의 색이 filling 되는 경우 한 번만 추정 label 을 출력
             print('\n\n=== 해당 이미지는 '+dic_label[label]+'(으)로 추정됩니다 === ')
         color_count = self.return_size(copy.deepcopy(segmentation_img),20)
-
-        print("color count : ", color_count)
 
         if label == 'apple':                                                    # 사과
             if cnt == 1:

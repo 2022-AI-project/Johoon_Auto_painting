@@ -46,9 +46,7 @@ class classification():
 
         print("PREDICTION BEFORE\n", prediction)
 
-        np.set_printoptions(formatter={'float': lambda x: "{0:0.3f}".format(x)})    # label 들에 대한 확률 표로 바뀐다.
-                                                                                    # [0.12, 0.55, 0.24, 0.00, 0.00, 0.09] 가
-                                                                                    # [0.00, 1.00, 0.00, 0.00, 0.00, 0.00] 으로 바뀐다.
+        np.set_printoptions(formatter={'float': lambda x: "{0:0.3f}".format(x)})    # label 들에 대한 확률값들을 소수 셋째자리까지 반올림한다.
 
         print("PREDICTION AFTER\n", prediction)
 
@@ -86,6 +84,6 @@ class classification():
                 self.label = 'tomato'
             elif v[5] >= label_percentage:
                 self.label = 'watermelon'
-            else:
+            else:   # 가장 큰 확률의 label 이 0.8을 넘지 못 하면 없는 data로 출력한다.
                 print("해당 이미지는 없는 데이터입니다.")
                 self.label = 'none'
