@@ -81,20 +81,19 @@ class make_model():
         import keras.backend.tensorflow_backend as K
         import tensorflow as tf
 
-        config = tf.compat.v1.ConfigProto()
+        config = tf.compat.v1.ConfigProto()     # Configuration
         config.gpu_options.allow_growth = True
-        session = tf.compat.v1.Session(config=config)
 
         X_train, X_test, y_train, y_test = np.load("./numpy_data/multi_image_data.npy", allow_pickle = True)
         
-        X_train = X_train.astype(float) / 255
-        X_test = X_test.astype(float) / 255
+        X_train = X_train.astype(float) / 255   # 현재 Input train data의 모든 element 값을 255로 나눈다.
+        X_test = X_test.astype(float) / 255     # 현재 Input test data의 모든 element 값을 255로 나눈다.
 
         '''
         1. 사용된 parameter 의 총 개수를 얻어보자.
         '''
         with K.tf_ops.device('/device:CPU:0'):
-            model = Sequential()
+            model = Sequential() # CNN 을 통해 model 을 만들 것 이다.
             
             model.add(Conv2D(32, (3, 3), padding="same", input_shape=X_train.shape[1:], activation='relu'))
             model.add(MaxPooling2D(pool_size=(2, 2)))
@@ -110,21 +109,22 @@ class make_model():
             model.add(Dense(self.nb_classes, activation='softmax'))
             model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-            model_dir = './model'
+            model_dir = './model'               # model 이 저장되는 directory 이다.
 
-            if not os.path.exists(model_dir):
-                os.mkdir(model_dir)
+            if not os.path.exists(model_dir):   # model_dir 이 존재하지 않는다면
+                os.mkdir(model_dir)             #   model_dir 을 미리 만든다.
 
-            model_path = model_dir + '/multi_img_classification_6_256_relu.model'
-            checkpoint = ModelCheckpoint(filepath=model_path, monitor='val_loss',
+            model_path = model_dir + '/multi_img_classification_6_256_relu.model'   # model 은 model_dir 에 좌측과 같은 이름으로 생성된다.
+            checkpoint = ModelCheckpoint(filepath=model_path, monitor='val_loss',   # 현재 model을 저장한다.
                                          verbose=1, save_best_only=True)
             
-            early_stopping = EarlyStopping(monitor='val_loss', patience=6)
+            early_stopping = EarlyStopping(monitor='val_loss', patience=6)          # validation loss 값이 6개의 연속된 epoch 에서 더이상 나아지지 않을때 stop 한다.
 
-        model.summary()
+        model.summary()                         # model 의 각 layer 들을 파악한다.
 
+        # batch size 와 epoch 수를 정하여 model.fit 을 실행한다.
         history = model.fit(X_train, y_train, batch_size=256, epochs=50, validation_data=(X_test, y_test), callbacks=[checkpoint, early_stopping])
-        # batch_size, epochs 조절해가면서 변화 확인
+        
         print("정확도 : %.4f" % (model.evaluate(X_test, y_test)[1]))
 
         y_vloss = history.history['val_loss']
