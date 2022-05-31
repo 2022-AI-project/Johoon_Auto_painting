@@ -31,7 +31,7 @@ class make_model():
                 img = img.resize((self.image_w, self.image_h))    # 현재 image 를 128 * 128 size 로 resizing 한다.
                 white = (255, 255, 255)                 # 하얀색은 RGB로 [255, 255, 255] 이다.
 
-                for j in range(-9, 9):
+                for j in range(-9, 9):                      # -180도 부터 20도씩 증가하여 160도까지 Image Rotation 을 진행한다.
                     img_name = f.split('.')
                     img_name = img_name[1].split("\\")
 
@@ -111,6 +111,7 @@ class make_model():
             model.add(Dropout(0.5))
             model.add(Dense(self.nb_classes, activation='softmax'))
             model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+
             model_dir = './model'
 
             if not os.path.exists(model_dir):
