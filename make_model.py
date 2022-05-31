@@ -35,12 +35,12 @@ class make_model():
                     img_name = f.split('.')
                     img_name = img_name[1].split("\\")
 
-                    img_ro = img.rotate(20 * j, expand = 1, fillcolor = white)
+                    img_ro = img.rotate(20 * j, expand = 1, fillcolor = white)  # `20 * j` 부분에서 20도 기준으로 돌아가도록 구현되었다.
                     img_ro = img_ro.crop((img_ro.size[0]/2 - self.image_w/2, img_ro.size[1]/2 - self.image_h/2, img_ro.size[0]/2 + self.image_w/2, img_ro.size[1]/2 + self.image_h/2))
                     finally_saving_dir = saving_dir + "/" + cat + "/" + img_name[1] + "_" + str(j + 10) + ".png"
                     img_ro.save(finally_saving_dir)
 
-    # *.npy file 을 만드는 method 이다.
+    # Dataset을 가지고 *.npy file 을 만드는 method 이다.
     def make_npy_file(self):
         # rotate 된 train data image 가 있는 directory
         caltech_dir_rotated = "./multi_img_data/imgs_others/train_rotated"
@@ -48,21 +48,19 @@ class make_model():
         X = []
         y = []
 
-        for idx, cat in enumerate(self.categories):
+        for idx, cat in enumerate(self.categories):                     # Category 순서대로 Dataset 을 불러온다.
             # 현재 label target score 를 정의한다.
-            label = [0 for i in range(self.nb_classes)]
-            label[idx] = 1
+            label = [0 for i in range(self.nb_classes)]                 # Category 순서대로 label 을 만든 뒤
+            label[idx] = 1                                              #   현재 label에 해당되는 부분만 1로 만든다.
 
-            image_dir_rotated = caltech_dir_rotated + "/" + cat
-            files_rotated = glob.glob(image_dir_rotated + "/*.png")
-
-            print("회전된", cat, "사진 개수 : ", len(files_rotated))
+            image_dir_rotated = caltech_dir_rotated + "/" + cat         # 현재 label에 해당되는 Dataset이 있는 directory 이다.
+            files = glob.glob(image_dir_rotated + "/*.png")             # 그 directory에 있는 모든 *.png 파일들 이다.
         
-            for i, f in enumerate(files_rotated):
-                img = Image.open(f)
+            for i, f in enumerate(files):                               # 불러온 모든 Dataset file 들을
+                img = Image.open(f)                                     # 하나하나 open 하고
                 # img = img.convert("RGB")
                 # img = img.resize((self.image_w, self.image_h))
-                data = np.asarray(img)
+                data = np.asarray(img)                                  # data화 한다.
                
                 X.append(data)      # 현재 image data 를 append 한다.
                 y.append(label)     # 현재 image 의 target score 를 append 한다.
@@ -71,9 +69,9 @@ class make_model():
         y = np.array(y)
 
         X_train, X_test, y_train, y_test = train_test_split(X, y)   # train, validation set으로 나뉜다.
-        xy = (X_train, X_test, y_train, y_test)
-
-        np.save("./numpy_data/multi_image_data.npy", xy)
+                                                                    # 임의의 25%의 Data가 validation set 으로 나뉜다.
+        xy = (X_train, X_test, y_train, y_test)                     # train, validation data 를 xy 에 저장한다.
+        np.save("./numpy_data/multi_image_data.npy", xy)            # 그 xy를 통해 *.npy 파일을 생성한다.
 
     def make_model(self):
         from keras.models import Sequential
