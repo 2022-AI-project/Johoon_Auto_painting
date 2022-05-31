@@ -28,7 +28,8 @@ class make_model():
             for i, f in enumerate(files):               #   모든 *.png 파일을 하나하나 작업을 진행한다.
                 img = Image.open(f)                     # img 로 현재 파일을 정의한 후
                 img = img.convert("RGB")                #   현재 image 를 RGB mode 로 변경한다.
-                img = img.resize((self.image_w, self.image_h))    # 현재 image 를 128 * 128 size 로 resizing 한다.
+                img = img.resize((self.image_w, self.image_h))      # 현재 image 를 128 * 128 size 로 resizing 한다.
+                                                                    # Data augmentation 에 해당된다.
                 white = (255, 255, 255)                 # 하얀색은 RGB로 [255, 255, 255] 이다.
 
                 for j in range(-9, 9):                      # -180도 부터 20도씩 증가하여 160도까지 Image Rotation 을 진행한다.
@@ -117,7 +118,7 @@ class make_model():
             model_path = model_dir + '/multi_img_classification_6_256_relu.model'   # model 은 model_dir 에 좌측과 같은 이름으로 생성된다.
             checkpoint = ModelCheckpoint(filepath=model_path, monitor='val_loss',   # 현재 model을 저장한다.
                                          verbose=1, save_best_only=True)
-            
+            ㅏ
             early_stopping = EarlyStopping(monitor='val_loss', patience=6)          # validation loss 값이 6개의 연속된 epoch 에서 더이상 나아지지 않을때 stop 한다.
 
         model.summary()                         # model 의 각 layer 들을 파악한다.

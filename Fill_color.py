@@ -8,10 +8,8 @@ class Fill_color(object):
         self.file = ''
         self.start(filename, label, cnt)
 
-    def start(self, file_name, label, cnt):
-        w = open('./bin_img_file', 'w')
-        
-        origin_img = cv2.imread(file_name)
+    def start(self, file_name, label, cnt): # cnt 의 값이 2인 경우는 칠해지는 색이 2종류 인 것이다.
+        origin_img = cv2.imread(file_name)  # file 을 읽는다.
         if origin_img is None:
             print('================== error - not found : ' + file_name + '======================')
             return

@@ -14,10 +14,8 @@ class classification():
     def classify(self):
         caltech_dir = "./multi_img_data/imgs_others_test_sketch"
 
-        image_w = 128
-        image_h = 128
-
-        pixels = image_h * image_w * 3
+        image_w = 128   # image 의 width
+        image_h = 128   # image 의 height
 
         X = []
         filenames = []
@@ -46,13 +44,13 @@ class classification():
         model = load_model('./model/multi_img_classification_6_64_relu.model')
         prediction = model.predict(X)
 
-        # print("PREDICTION BEFORE\n", prediction)
+        print("PREDICTION BEFORE\n", prediction)
 
         np.set_printoptions(formatter={'float': lambda x: "{0:0.3f}".format(x)})    # label 들에 대한 확률 표로 바뀐다.
                                                                                     # [0.12, 0.55, 0.24, 0.00, 0.00, 0.09] 가
                                                                                     # [0.00, 1.00, 0.00, 0.00, 0.00, 0.00] 으로 바뀐다.
 
-        # print("PREDICTION AFTER\n", prediction)
+        print("PREDICTION AFTER\n", prediction)
 
         # sg = Segmentation()
 
@@ -72,19 +70,21 @@ class classification():
             elif pre_ans == 5: pre_ans_str = "수박"     # 초록
             else: pre_ans_str = "식별 불가능"
 
-            # 이 위치에선 현재 v Array value 들 중 하나만 1.00 이다. 그게 label 에 해당됨
+            # 0.8 이상의 percentage 를 갖고 있는 label이
+            #   label value 로 여겨진다.
+            label_percentage = 0.8
 
-            if v[0] >= 0.8:
+            if v[0] >= label_percentage:
                 self.label = 'apple'
-            elif v[1] >= 0.8:
+            elif v[1] >= label_percentage:
                 self.label = 'carrot'
-            elif v[2] >= 0.8:
+            elif v[2] >= label_percentage:
                 self.label = 'orientalmelon'
-            elif v[3] >= 0.8:
+            elif v[3] >= label_percentage:
                 self.label = 'strawberry'
-            elif v[4] >= 0.8:
+            elif v[4] >= label_percentage:
                 self.label = 'tomato'
-            elif v[5] >= 0.8:
+            elif v[5] >= label_percentage:
                 self.label = 'watermelon'
             else:
                 print("해당 이미지는 없는 데이터입니다.")

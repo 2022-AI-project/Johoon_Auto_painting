@@ -27,92 +27,35 @@ class drawing_board(QWidget):
         right = QVBoxLayout()
         self.right2 = QVBoxLayout()
 
-        # 그룹박스1 생성 및 좌 레이아웃 배치
-        # gb = QGroupBox('그리기 종류')
-        # left.addWidget(gb)
-
-        # 그룹박스1 에서 사용할 레이아웃
-        # box = QVBoxLayout()
-        # gb.setLayout(box)
-
-        # 그룹박스 1 의 라디오 버튼 배치
-        # text = ['line', 'Curve', 'Rectange', 'Ellipse']
-        # self.radiobtns = []
-
-        # for i in range(len(text)):
-        #     self.radiobtns.append(QRadioButton(text[i], self))
-        #     self.radiobtns[i].clicked.connect(self.radioClicked)
-        # #     box.addWidget(self.radiobtns[i])
-
-        # self.radiobtns[1].setChecked(True)
         self.drawType = 1
 
-        # 그룹박스2
-        # gb = QGroupBox('펜 설정')
-        # left.addWidget(gb)
-
-        # grid = QGridLayout()
-        # gb.setLayout(grid)
-
-        # label = QLabel('선굵기')
-        # grid.addWidget(label, 0, 0)
-
         self.combo = QComboBox()
-        # grid.addWidget(self.combo, 0, 1)
  
         for i in range(4, 21):
             self.combo.addItem(str(i))
-
-        # label = QLabel('선색상')
-        # grid.addWidget(label, 1, 0)
-
         self.pencolor = QColor(0, 0, 0)
         self.penbtn = QPushButton()
         self.penbtn.setStyleSheet('background-color: rgb(0,0,0)')
         self.penbtn.clicked.connect(self.showColorDlg)
-        # grid.addWidget(self.penbtn, 1, 1)
-
-        # 그룹박스3
-        # gb = QGroupBox('붓 설정')
-        # left.addWidget(gb)
-
-        # hbox = QHBoxLayout()
-        # gb.setLayout(hbox)
-
-        # label = QLabel('붓색상')
-        # hbox.addWidget(label)
 
         self.brushcolor = QColor(255, 255, 255)                             # brush color == black
         self.brushbtn = QPushButton()                                       
         self.brushbtn.setStyleSheet('background-color: rgb(255,255,255)')
         self.brushbtn.clicked.connect(self.showColorDlg)
-        # hbox.addWidget(self.brushbtn)
-
-        # 그룹박스4
-        # gb = QGroupBox('지우개')
-        # left.addWidget(gb)
-
-        # hbox = QHBoxLayout()
-        # gb.setLayout(hbox)
 
         self.checkbox = QCheckBox('지우개 동작')
         self.checkbox.stateChanged.connect(self.checkClicked)
-        # hbox.addWidget(self.checkbox)
 
         # 우 레이아웃 박스에 그래픽 뷰 추가
         self.view = CView(self)
         self.view.setFixedWidth(256)
         self.view.setFixedHeight(256)
         left.addWidget(self.view)
+
         # 전체 지우기
         removebutton = QPushButton('전체 지우기', self)
         left.addWidget(removebutton)
         removebutton.clicked.connect(self.remove_all)
-
-        # 사진저장 버튼
-        # savebutton = QPushButton('그림 저장', self)
-        # left.addWidget(savebutton)
-        # savebutton.clicked.connect(self.save_image)
 
         # painting 버튼
         paintingbutton = QPushButton('자동 채색', self)
@@ -120,7 +63,6 @@ class drawing_board(QWidget):
         paintingbutton.clicked.connect(self.load_image)
 
         left.addStretch(1)  # 그냥 레이아웃 여백 추가
-
 
         # 제일 오른쪽 레이아웃에 빈 흰색 배경
         pixmap = QPixmap('whiteimage.png')
@@ -162,14 +104,14 @@ class drawing_board(QWidget):
             self.brushcolor = color
             self.brushbtn.setStyleSheet('background-color: {}'.format(color.name()))
 
-    def save_image(self):
+    def save_image(self):       # Sketch 된 image 를 저장한다.
         date = datetime.now()
-        filename = 'Screenshot ' + date.strftime('%Y-%m-%d_%H-%M-%S.png')
+        filename = 'Screenshot ' + date.strftime('%Y-%m-%d_%H-%M-%S.png')   # datetime 을 뒤에 덧붙여 저장한다.
         img = QPixmap(self.view.grab(self.view.sceneRect().toRect()))
-        self.file = "./multi_img_data/imgs_others_test_sketch/" + filename
-        img.save(self.file, 'png')
-        img = cv2.imread(self.file, 0)
-        img = img[2:476, 2:663]     #사진 저장할 때 끝부분 모서리 지우기
+        self.file = "./multi_img_data/imgs_others_test_sketch/" + filename  # sketch된 그림이 저장되는 path 이다.
+        img.save(self.file, 'png')      # *.png 형태로 image 가 저장된다.
+        img = cv2.imread(self.file, 0) 
+        img = img[2:476, 2:663]         # 사진을 저장할 때 끝부분 모서리 부분을 지운다.
         cv2.imwrite(self.file, img)
 
     def remove_all(self):
@@ -200,33 +142,32 @@ class drawing_board(QWidget):
         reply = self.msg_box('\"'+ korean_label +'\"을 그린 게 맞다면 \"OK\" 버튼을, 다시 그리고 싶다면 \"NO\" 버튼을 눌러주세요.')
         if reply == True:
             self.lbl_img.hide()  # 전 이미지 숨김
-            if label == "apple":
-                self.file2 = copy.copy(self.file)
-                fill = Fill_color(self.file, label, 1)    #이미지 색칠
+            if label == "apple" or label == "tomato" or label == "strawberry":  # label이 사과, 토마토, 딸기인 경우 실행된다.
+                self.file2 = copy.copy(self.file)                               # 2가지 색을 칠하는 작업이 진행된다.
+                fill = Fill_color(self.file, label, 1)
                 self.file = fill.file
-            # print(self.file)
 
-                pixmap = QPixmap(self.file)  # jpg 는 안되는데 왜 안되는 지 아직 모르겠다..
+                pixmap = QPixmap(self.file)
 
                 self.lbl_img = QLabel()
                 self.lbl_img.setPixmap(pixmap)
                 self.right2.addWidget(self.lbl_img)
 
-                fill = Fill_color(self.file2, label, 2)    #이미지 색칠
+                fill = Fill_color(self.file2, label, 2)
                 self.file2 = fill.file
                 # print(self.file)
 
-                pixmap = QPixmap(self.file2)  # jpg 는 안되는데 왜 안되는 지 아직 모르겠다..
+                pixmap = QPixmap(self.file2)
 
                 self.lbl_img = QLabel()
                 self.lbl_img.setPixmap(pixmap)
                 self.right2.addWidget(self.lbl_img)
-            else:
-                fill = Fill_color(self.file, label, 1)    #이미지 색칠
+            else:                                                               # label이 당근, 수박, 참외인 경우 실행된다.
+                fill = Fill_color(self.file, label, 1)                          # 1가지 색을 칠하는 작업이 진행된다.
                 self.file = fill.file
             # print(self.file)
 
-                pixmap = QPixmap(self.file)  # jpg 는 안되는데 왜 안되는 지 아직 모르겠다..
+                pixmap = QPixmap(self.file)
 
                 self.lbl_img = QLabel()
                 self.lbl_img.setPixmap(pixmap)

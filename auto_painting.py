@@ -7,13 +7,13 @@ from PyQt5.QtGui import *
 
 # QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)  # 화면크기스케일링
 
-class auto_painting:
+class auto_painting:                    # painting 시 가장 먼저 실행이 되는 class 이다.
     def __init__(self):
         self.painting()
 
     def painting(self):
         app = QApplication(sys.argv)
-        board = drawing_board()
+        board = drawing_board()         # drawing board 를 출력한다.
         board.show()
         sys.exit(app.exec_())
 
