@@ -95,19 +95,19 @@ class make_model():
         with K.tf_ops.device('/device:CPU:0'):
             model = Sequential() # CNN 을 통해 model 을 만들 것 이다.
             
-            model.add(Conv2D(32, (3, 3), padding="same", input_shape=X_train.shape[1:], activation='relu'))
-            model.add(MaxPooling2D(pool_size=(2, 2)))
-            model.add(Dropout(0.25))
+            model.add(Conv2D(32, (3, 3), padding="same", input_shape=X_train.shape[1:], activation='relu')) # 3x3 Conv, 32 filters, 공간정보 유지, relu
+            model.add(MaxPooling2D(pool_size=(2, 2)))                                                       # 2x2 maxPooling, 공간이 1/2 로 줄어든다.
+            model.add(Dropout(0.25))                                                                        # 25% 확률로 dropout을 진행한다.
 
-            model.add(Conv2D(64, (3, 3), padding="same", activation='relu'))
-            model.add(MaxPooling2D(pool_size=(2, 2)))
-            model.add(Dropout(0.25))
+            model.add(Conv2D(64, (3, 3), padding="same", activation='relu'))                                # 3x3 Conv, 64 filters, 공간정보 유지, relu
+            model.add(MaxPooling2D(pool_size=(2, 2)))                                                       # 2x2 maxPooling, 공간이 1/2 로 줄어든다.
+            model.add(Dropout(0.25))                                                                        # 25% 확률로 dropout을 진행한다.
 
-            model.add(Flatten())
-            model.add(Dense(256, activation='relu'))
-            model.add(Dropout(0.5))
-            model.add(Dense(self.nb_classes, activation='softmax'))
-            model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+            model.add(Flatten())                                                                            # 현재 map 을 flatten 한다.
+            model.add(Dense(256, activation='relu'))                                                        # 1*1*256 으로 dense 시킨다.
+            model.add(Dropout(0.5))                                                                         # 50% 확률로 dropout을 진행한다.
+            model.add(Dense(self.nb_classes, activation='softmax'))                                         # class의 개수만큼 차원의 벡터를 출력한다.
+            model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])          
 
             model_dir = './model'               # model 이 저장되는 directory 이다.
 
