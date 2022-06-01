@@ -24,7 +24,7 @@ class Fill_color(object):
         print("bin_img[0] size : ", len(bin_img[0]))
         sg_img , count, count_size = self.segmentation(bin_img)
         result = self.segmentation_image_show(origin_img,sg_img, label, count, cnt)
-        result = self.line_effect(sg_img, result, 7, 10)
+        result = self.line_effect(sg_img, result, 7, 10)    # 
         result = self.natural_coloring(result, 80)
         result = cv2.GaussianBlur(result, (3, 3), 0)
         cv2.imwrite('./multi_img_data/result/result.png', result)
