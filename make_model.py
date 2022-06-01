@@ -10,8 +10,8 @@ class make_model():
         self.image_w = 128   # width of image
         self.image_h = 128   # height of image
 
-        self.image_rotate()     # 전처리 완료 시 생략 
-        self.make_npy_file()
+        #self.image_rotate()     # 전처리 완료 시 생략 
+        #self.make_npy_file()
         self.make_model()
 
     # train data image 를 rotate 하는 method -> Data augmentation
@@ -87,7 +87,7 @@ class make_model():
         config = tf.compat.v1.ConfigProto()     # Configuration
         config.gpu_options.allow_growth = True
 
-        X_train, X_test, y_train, y_test = np.load("./numpy_data/multi_image_data.npy", allow_pickle = True)
+        X_train, X_test, y_train, y_test = np.load("./numpy_data/multi_image_data_test.npy", allow_pickle = True)
         
         X_train = X_train.astype(float) / 255   # 현재 Input train data의 모든 element 값을 255로 나눈다.
         X_test = X_test.astype(float) / 255     # 현재 Input test data의 모든 element 값을 255로 나눈다.
@@ -110,7 +110,7 @@ class make_model():
             model.add(Dense(256, activation='relu'))                                                        # 1*1*256 으로 dense 시킨다.
             model.add(Dropout(0.5))                                                                         # 50% 확률로 dropout을 진행한다.
             model.add(Dense(self.nb_classes, activation='softmax'))                                         # class의 개수만큼 차원의 벡터를 출력한다.
-            model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])          
+            model.compile(loss='categorical_crossentropy', optimizer='nadam', metrics=['accuracy'])          
 
             model_dir = './model'               # model 이 저장되는 directory 이다.
 
@@ -121,12 +121,12 @@ class make_model():
             checkpoint = ModelCheckpoint(filepath=model_path, monitor='val_loss',   # 현재 model을 저장한다.
                                          verbose=1, save_best_only=True)
             
-            early_stopping = EarlyStopping(monitor='val_loss', patience=60)          # validation loss 값이 6개의 연속된 epoch 에서 더이상 나아지지 않을때 stop 한다.
+            early_stopping = EarlyStopping(monitor='val_loss', patience=600)          # validation loss 값이 6개의 연속된 epoch 에서 더이상 나아지지 않을때 stop 한다.
 
         model.summary()                         # model 의 각 layer 들을 파악한다.
 
         # batch size 와 epoch 수를 정하여 model.fit 을 실행한다.
-        history = model.fit(X_train, y_train, batch_size=128, epochs=50, validation_data=(X_test, y_test), callbacks=[checkpoint, early_stopping])
+        history = model.fit(X_train, y_train, batch_size=128, epochs=100, validation_data=(X_test, y_test), callbacks=[checkpoint, early_stopping])
         
         print("정확도 : %.4f" % (model.evaluate(X_test, y_test)[1]))
 
