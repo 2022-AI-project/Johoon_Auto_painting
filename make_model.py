@@ -56,6 +56,8 @@ class make_model():
 
             image_dir_rotated = caltech_dir_rotated + "/" + cat         # 현재 label에 해당되는 Dataset이 있는 directory 이다.
             files = glob.glob(image_dir_rotated + "/*.png")             # 그 directory에 있는 모든 *.png 파일들 이다.
+
+            print(" ", label, " data 개수 :", len(files))
         
             for i, f in enumerate(files):                               # 불러온 모든 Dataset file 들을
                 img = Image.open(f)                                     # 하나하나 open 하고
@@ -115,16 +117,16 @@ class make_model():
             if not os.path.exists(model_dir):   # model_dir 이 존재하지 않는다면
                 os.mkdir(model_dir)             #   model_dir 을 미리 만든다.
 
-            model_path = model_dir + '/multi_img_classification_6_256_relu.model'   # model 은 model_dir 에 좌측과 같은 이름으로 생성된다.
+            model_path = model_dir + '/multi_img_classification_epoch50_batch128.model'   # model 은 model_dir 에 좌측과 같은 이름으로 생성된다.
             checkpoint = ModelCheckpoint(filepath=model_path, monitor='val_loss',   # 현재 model을 저장한다.
                                          verbose=1, save_best_only=True)
-            ㅏ
-            early_stopping = EarlyStopping(monitor='val_loss', patience=6)          # validation loss 값이 6개의 연속된 epoch 에서 더이상 나아지지 않을때 stop 한다.
+            
+            early_stopping = EarlyStopping(monitor='val_loss', patience=60)          # validation loss 값이 6개의 연속된 epoch 에서 더이상 나아지지 않을때 stop 한다.
 
         model.summary()                         # model 의 각 layer 들을 파악한다.
 
         # batch size 와 epoch 수를 정하여 model.fit 을 실행한다.
-        history = model.fit(X_train, y_train, batch_size=256, epochs=50, validation_data=(X_test, y_test), callbacks=[checkpoint, early_stopping])
+        history = model.fit(X_train, y_train, batch_size=128, epochs=50, validation_data=(X_test, y_test), callbacks=[checkpoint, early_stopping])
         
         print("정확도 : %.4f" % (model.evaluate(X_test, y_test)[1]))
 

@@ -49,7 +49,7 @@ class classification():
         np.set_printoptions(formatter={'float': lambda x: "{0:0.3f}".format(x)})    # label 들에 대한 확률값들을 소수 셋째자리까지 반올림한다.
 
         print("PREDICTION AFTER\n", prediction)
-
+        print("----------------------------------")
         # sg = Segmentation()
 
         # print("START PREDICTION")
