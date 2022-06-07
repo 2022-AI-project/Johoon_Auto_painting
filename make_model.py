@@ -96,7 +96,7 @@ class make_model():
         1. 사용된 parameter 의 총 개수를 얻어보자.
         '''
         with K.tf_ops.device('/device:CPU:0'):
-            model = Sequential() # CNN 을 통해 model 을 만들 것 이다.
+            model = Sequential()                                                                            # CNN 을 통해 model 을 만들 것 이다.
             
             model.add(Conv2D(32, (3, 3), padding="same", input_shape=X_train.shape[1:], activation='relu')) # 3x3 Conv, 32 filters, 공간정보 유지, relu
             model.add(MaxPooling2D(pool_size=(2, 2)))                                                       # 2x2 maxPooling, 공간이 1/2 로 줄어든다.
@@ -110,14 +110,14 @@ class make_model():
             model.add(Dense(256, activation='relu'))                                                        # 1*1*256 으로 dense 시킨다.
             model.add(Dropout(0.5))                                                                         # 50% 확률로 dropout을 진행한다.
             model.add(Dense(self.nb_classes, activation='softmax'))                                         # class의 개수만큼 차원의 벡터를 출력한다.
-            model.compile(loss='categorical_crossentropy', optimizer='nadam', metrics=['accuracy'])          
+            model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])          
 
             model_dir = './model'               # model 이 저장되는 directory 이다.
 
             if not os.path.exists(model_dir):   # model_dir 이 존재하지 않는다면
                 os.mkdir(model_dir)             #   model_dir 을 미리 만든다.
 
-            model_path = model_dir + '/multi_img_classification_epoch50_batch128.model'   # model 은 model_dir 에 좌측과 같은 이름으로 생성된다.
+            model_path = model_dir + '/multi_img_classification_nouse.model'   # model 은 model_dir 에 좌측과 같은 이름으로 생성된다.
             checkpoint = ModelCheckpoint(filepath=model_path, monitor='val_loss',   # 현재 model을 저장한다.
                                          verbose=1, save_best_only=True)
             
@@ -126,7 +126,7 @@ class make_model():
         model.summary()                         # model 의 각 layer 들을 파악한다.
 
         # batch size 와 epoch 수를 정하여 model.fit 을 실행한다.
-        history = model.fit(X_train, y_train, batch_size=128, epochs=100, validation_data=(X_test, y_test), callbacks=[checkpoint, early_stopping])
+        history = model.fit(X_train, y_train, batch_size=128, epochs=50, validation_data=(X_test, y_test), callbacks=[checkpoint, early_stopping])
         
         print("정확도 : %.4f" % (model.evaluate(X_test, y_test)[1]))
 
@@ -135,6 +135,8 @@ class make_model():
         
         y_vacc = history.history['val_accuracy']
         y_acc = history.history['accuracy']
+
+        print("y vLoss :", y_vloss)
 
         x_len = np.arange(len(y_loss))
 
@@ -156,6 +158,6 @@ class make_model():
         plt.grid()
         
         plt.show()
-        
+
 if __name__ == '__main__':
     w = make_model()

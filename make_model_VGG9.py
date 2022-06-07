@@ -96,18 +96,26 @@ class make_model():
         1. 사용된 parameter 의 총 개수를 얻어보자.
         '''
 
+
+
+
+
         model2 = Sequential()
-        model2.add(k.layers.Conv2D(64, (3, 3), padding="same", input_shape=X_train.shape[1:], activation="relu"))
+        model2.add(k.layers.Conv2D(64, (3, 3), padding="same", input_shape=X_train.shape[1:]
+                                    , activation="relu"))
+        model2.add(k.layers.Conv2D(64, (3, 3), padding="same", activation="relu"))
+        model2.add(k.layers.Conv2D(64, (3, 3), padding="same", activation="relu"))
         model2.add(k.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="same"))
         model2.add(k.layers.Dropout(0.25))
         
+        model2.add(k.layers.Conv2D(128, (3, 3), padding="same", activation="relu"))        
+        model2.add(k.layers.Conv2D(128, (3, 3), padding="same", activation="relu"))        
         model2.add(k.layers.Conv2D(128, (3, 3), padding="same", activation="relu"))
-        # model2.add(k.layers.Conv2D(128, (3, 3), padding="same", activation="relu"))
         model2.add(k.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="same"))
         model2.add(k.layers.Dropout(0.25))
 
-        # model2.add(k.layers.Conv2D(256, (3, 3), padding="same", activation="relu"))
-        # model2.add(k.layers.Conv2D(256, (3, 3), padding="same", activation="relu"))
+        model2.add(k.layers.Conv2D(256, (3, 3), padding="same", activation="relu"))
+        model2.add(k.layers.Conv2D(256, (3, 3), padding="same", activation="relu"))
         model2.add(k.layers.Conv2D(256, (3, 3), padding="same", activation="relu"))
         model2.add(k.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="same"))
         model2.add(k.layers.Dropout(0.25))
@@ -118,9 +126,6 @@ class make_model():
         model2.add(k.layers.Dense(256, activation="softmax"))
 
         model2.compile(loss='sparse_categorical_crossentropy', metrics='accuracy')
-
-        history = model2.fit(X_train, y_train, epochs=5, verbose=0)
-
         model_dir = './model'
 
         if not os.path.exists(model_dir):
@@ -133,7 +138,10 @@ class make_model():
 
         model2.summary()
 
-        history = model2.fit(X_train, y_train, batch_size=128, epochs=50, validation_data=(X_test, y_test), callbacks=[checkpoint, early_stopping])
+        history = model2.fit(X_train, y_train, batch_size=128, epochs=50, validation_data=(X_test, y_test)
+                            , callbacks=[checkpoint, early_stopping])
+
+                            
         # batch_size, epochs 조절해가면서 변화 확인
         print("정확도 : %.4f" % (model2.evaluate(X_test, y_test)[1]))
 

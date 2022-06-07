@@ -14,7 +14,6 @@ class Fill_color(object):
             print('================== error - not found : ' + file_name + '======================')
             return
 
-
         gray_img = cv2.imread(file_name,0)
         bin_img = self.binarize(gray_img, 250)
 
@@ -66,7 +65,7 @@ class Fill_color(object):
                             count_size[count] += 1                      #   count_size[count] 값을 1 늘린다.
                             for i in range(4):                                  # 현재 pixel 에서 상하좌우 영역의 pixel을
                                 q.append([x + offset[i][0], y + offset[i][1]])  #   q 에 추가한다.
-
+            
         # 가장 많이 칠해진 영역이 앞에 오도록 count_size sorting 을 진행한다.
         count_size = sorted(count_size.items(), reverse = True, key = lambda item: item[1])
 
@@ -116,7 +115,7 @@ class Fill_color(object):
             for seg_cnt in range(count - 1):
                 for i in range(len(segmentation_img)):
                     for j in range(len(segmentation_img[0])):
-                        if segmentation_img[i][j] >= 3:
+                        if segmentation_img[i][j] >= 2:
                             color_img[i][j] = color
         elif label == 'carrot':                                                 # 당근
             color = [[38, 67, 243], [10, 180, 10]]
@@ -132,7 +131,7 @@ class Fill_color(object):
             if cnt == 1:
                 color = [[54,54,255],[10,180,10]]
             elif cnt == 2:
-                color = [[20, 160, 20], [10, 180, 10]]
+                color = [[222, 249, 206], [10, 180, 10]]
             for seg_cnt in range(count - 1):
                 for i in range(len(segmentation_img)):
                     for j in range(len(segmentation_img[0])):

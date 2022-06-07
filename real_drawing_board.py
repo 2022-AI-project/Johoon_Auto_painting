@@ -78,7 +78,7 @@ class drawing_board(QWidget):
         formbox.setStretchFactor(left, 0)
         formbox.setStretchFactor(right, 1)
 
-        self.setGeometry(100, 100, 700, 400)
+        self.setGeometry(100, 100, 500, 400)
 
     def radioClicked(self):
         for i in range(len(self.radiobtns)):
