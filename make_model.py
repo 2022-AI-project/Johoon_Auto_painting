@@ -10,14 +10,14 @@ class make_model():
         self.image_w = 128   # width of image
         self.image_h = 128   # height of image
 
-        # self.image_rotate()     # 전처리 완료 시 생략 
+        self.image_rotate()     # 전처리 완료 시 생략 
         # self.make_npy_file()
-        self.make_model()
+        # self.make_model()
 
     # train data image 를 rotate 하는 method -> Data augmentation
     def image_rotate(self):
-        caltech_dir = "./multi_img_data/imgs_others/train"          # train data directory
-        saving_dir = "./multi_img_data/imgs_others/train_rotated"   # rotated train data directory
+        caltech_dir = "./multi_img_data/imgs_others/train_temp"          # train data directory
+        saving_dir = "./multi_img_data/imgs_others/train_rotated_temp"   # rotated train data directory
         # 6 categories -> 6 classes (6 labels)
 
         for idx, cat in enumerate(self.categories):     # 현재 6 개의 label 들에 대한 train data를 수집한다.
@@ -44,7 +44,7 @@ class make_model():
     # Dataset을 가지고 *.npy file 을 만드는 method 이다.
     def make_npy_file(self):
         # rotate 된 train data image 가 있는 directory
-        caltech_dir_rotated = "./multi_img_data/imgs_others/train_rotated"
+        caltech_dir_rotated = "./multi_img_data/imgs_others/train_rotated_temp"
 
         X = []
         y = []
@@ -74,7 +74,7 @@ class make_model():
         X_train, X_test, y_train, y_test = train_test_split(X, y)   # train, validation set으로 나뉜다.
                                                                     # 임의의 25%의 Data가 validation set 으로 나뉜다.
         xy = (X_train, X_test, y_train, y_test)                     # train, validation data 를 xy 에 저장한다.
-        np.save("./numpy_data/multi_image_data.npy", xy)            # 그 xy를 통해 *.npy 파일을 생성한다.
+        np.save("./numpy_data/multi_image_data_temp.npy", xy)            # 그 xy를 통해 *.npy 파일을 생성한다.
 
     def make_model(self):
         from keras.models import Sequential
@@ -87,7 +87,7 @@ class make_model():
         config = tf.compat.v1.ConfigProto()     # Configuration
         config.gpu_options.allow_growth = True
 
-        X_train, X_test, y_train, y_test = np.load("./numpy_data/multi_image_data.npy", allow_pickle = True)
+        X_train, X_test, y_train, y_test = np.load("./numpy_data/multi_image_data_temp.npy", allow_pickle = True)
         
         X_train = X_train.astype(float) / 255   # 현재 Input train data의 모든 element 값을 255로 나눈다.
         X_test = X_test.astype(float) / 255     # 현재 Input test data의 모든 element 값을 255로 나눈다.
