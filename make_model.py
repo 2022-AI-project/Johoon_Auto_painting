@@ -10,8 +10,8 @@ class make_model():
         self.image_w = 128   # width of image
         self.image_h = 128   # height of image
 
-        #self.image_rotate()     # 전처리 완료 시 생략 
-        #self.make_npy_file()
+        # self.image_rotate()     # 전처리 완료 시 생략 
+        # self.make_npy_file()
         self.make_model()
 
     # train data image 를 rotate 하는 method -> Data augmentation
@@ -87,7 +87,7 @@ class make_model():
         config = tf.compat.v1.ConfigProto()     # Configuration
         config.gpu_options.allow_growth = True
 
-        X_train, X_test, y_train, y_test = np.load("./numpy_data/multi_image_data_test.npy", allow_pickle = True)
+        X_train, X_test, y_train, y_test = np.load("./numpy_data/multi_image_data.npy", allow_pickle = True)
         
         X_train = X_train.astype(float) / 255   # 현재 Input train data의 모든 element 값을 255로 나눈다.
         X_test = X_test.astype(float) / 255     # 현재 Input test data의 모든 element 값을 255로 나눈다.
@@ -117,7 +117,7 @@ class make_model():
             if not os.path.exists(model_dir):   # model_dir 이 존재하지 않는다면
                 os.mkdir(model_dir)             #   model_dir 을 미리 만든다.
 
-            model_path = model_dir + '/multi_img_classification_nouse.model'   # model 은 model_dir 에 좌측과 같은 이름으로 생성된다.
+            model_path = model_dir + '/multi_img_classification.model'   # model 은 model_dir 에 좌측과 같은 이름으로 생성된다.
             checkpoint = ModelCheckpoint(filepath=model_path, monitor='val_loss',   # 현재 model을 저장한다.
                                          verbose=1, save_best_only=True)
             
