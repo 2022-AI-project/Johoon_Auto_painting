@@ -108,7 +108,7 @@ class Fill_color(object):
             for seg_cnt in range(count - 1):
                 for i in range(len(segmentation_img)):
                     for j in range(len(segmentation_img[0])):
-                        if segmentation_img[i][j] == color_count[0]:
+                        if segmentation_img[i][j] > 2:
                             color_img[i][j] = color
         elif label == 'orientalmelon':                                          # 참외
             color = [0, 255, 255]
