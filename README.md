@@ -1,6 +1,7 @@
-# Johoon's bling bling source
+1. make_model.py
+    - 정해진 Hyperparameter 조건에 맞에 model을 생성한다.
+    - 생성된 model은 *.model 파일로 저장된다.
 
-### 22.05.12
-1. Already sketched draw 들을 prediction 에서 배제
-2. 화면에 출력되는 추정 과일을 한국어로 변경
-3. Resized image를 출력
+2. auto_painting.py
+    - 다음을 실행하면 real_drawing_board.py, classification.py, Fill_color.py 가 순서대로 실행된다.
+    - 원하는 Image 를 drawing 한 후 classification 및 자동채색이 진행된다.

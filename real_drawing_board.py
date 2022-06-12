@@ -111,6 +111,9 @@ class drawing_board(QWidget):
         self.file = "./multi_img_data/imgs_others_test_sketch/" + filename  # sketch된 그림이 저장되는 path 이다.
         img.save(self.file, 'png')      # *.png 형태로 image 가 저장된다.
         img = cv2.imread(self.file, 0) 
+
+        print("img :", img)
+
         img = img[2:476, 2:663]         # 사진을 저장할 때 끝부분 모서리 부분을 지운다.
         cv2.imwrite(self.file, img)
 
@@ -125,7 +128,7 @@ class drawing_board(QWidget):
         # label 이 정의되었다. 즉, model 을 통해 Sketched image 가 무엇인지 prediction 했다.
         # print(label)
 
-        korean_label = ''
+        korean_label = ''       # 145번째 line 에서 English label을 한국말로 출력하기 위해 korean_label을 정의한다.
         if label == "apple":
             korean_label = "사과"
         elif label == "carrot":
@@ -173,7 +176,7 @@ class drawing_board(QWidget):
                 self.lbl_img.setPixmap(pixmap)
                 self.right2.addWidget(self.lbl_img)
 
-    def msg_box(self, text):
+    def msg_box(self, text):    # 과일을 그렸을 때 predict된 과일을 출력하면서 맞는지 여부를 물어보는 message box 이다.
         msgBox = QMessageBox()
         msgBox.setText(text)
         reply = msgBox.question(self, 'message', text, QMessageBox.Ok | QMessageBox.No, QMessageBox.No)
@@ -304,10 +307,3 @@ class CView(QGraphicsView):
                 self.items.clear()
                 rect = QRectF(self.start, self.end)
                 self.scene.addEllipse(rect, pen, brush)
-
-
-# if __name__ == '__main__':
-#     app = QApplication(sys.argv)
-#     w = drawing_board()
-#     w.show()
-#     sys.exit(app.exec_())

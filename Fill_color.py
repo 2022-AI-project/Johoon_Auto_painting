@@ -14,37 +14,10 @@ class Fill_color(object):
             print('================== error - not found : ' + file_name + '======================')
             return
 
-        w1 = open('./w1.txt', 'w')
-        w2 = open('./w2.txt', 'w')
-        w3 = open('./w3.txt', 'w')
-
         gray_img = cv2.imread(file_name,0)
-
-        for idx, val in enumerate(gray_img):
-            for idx2, val in enumerate(gray_img[idx]):
-                if idx < 60:
-                    w1.write(str(gray_img[idx][idx2]) + ' ')
-            if idx < 60: w1.write('\n')
-
         bin_img = self.binarize(gray_img, 250)
 
-        for idx, val in enumerate(bin_img):
-            for idx2, val in enumerate(bin_img[idx]):
-                if idx < 60:
-                    w2.write(str(bin_img[idx][idx2]) + ' ')
-            if idx < 60: w2.write('\n')
-
-        print("[bin img file")
-        print(bin_img)
-        print("bin_img size : ", len(bin_img))
-        print("bin_img[0] size : ", len(bin_img[0]))
         sg_img , count, count_size = self.segmentation(bin_img)
-
-        for idx, val in enumerate(sg_img):
-            for idx2, val in enumerate(sg_img[idx]):
-                if idx < 60:
-                    w3.write(str(sg_img[idx][idx2]) + ' ')
-            if idx < 60: w3.write('\n')
 
         result = self.segmentation_image_show(origin_img,sg_img, label, count, cnt)
         result = self.line_effect(sg_img, result, 7, 10)    # 
