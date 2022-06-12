@@ -87,3 +87,5 @@ class classification():
             else:   # 가장 큰 확률의 label 이 0.8을 넘지 못 하면 없는 data로 출력한다.
                 print("해당 이미지는 없는 데이터입니다.")
                 self.label = 'none'
+
+            
